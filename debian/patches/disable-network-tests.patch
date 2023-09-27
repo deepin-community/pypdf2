@@ -1,0 +1,841 @@
+From: "Laszlo Boszormenyi (GCS)" <gcs@debian.org>
+Date: Thu, 12 Jan 2023 18:54:41 -0500
+Subject: disable network test for buildds don't have access
+
+Forwarded: no
+Last-Update: 2023-01-13
+
+Just return from these tests.
+---
+ tests/test_cmap.py      | 15 +++++++++++++++
+ tests/test_filters.py   |  8 ++++++++
+ tests/test_generic.py   |  8 ++++++++
+ tests/test_merger.py    | 21 +++++++++++++++++++++
+ tests/test_page.py      | 13 +++++++++++++
+ tests/test_reader.py    | 28 ++++++++++++++++++++++++++++
+ tests/test_utils.py     |  1 +
+ tests/test_workflows.py | 21 +++++++++++++++++++++
+ tests/test_writer.py    |  4 ++++
+ tests/test_xmp.py       | 11 +++++++++++
+ 10 files changed, 130 insertions(+)
+
+diff --git a/tests/test_cmap.py b/tests/test_cmap.py
+index fc41b35..f97c7f7 100644
+--- a/tests/test_cmap.py
++++ b/tests/test_cmap.py
+@@ -14,6 +14,7 @@ def test_compute_space_width():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/923/923406.pdf"
+     name = "tika-923406.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -25,6 +26,7 @@ def test_parse_to_unicode_process_rg():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/959/959173.pdf"
+     name = "tika-959173.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -39,6 +41,7 @@ def test_parse_encoding_advanced_encoding_not_implemented():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/957/957144.pdf"
+     name = "tika-957144.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     with pytest.warns(PdfReadWarning, match="Advanced encoding .* not implemented yet"):
+         for page in reader.pages:
+@@ -49,6 +52,8 @@ def test_parse_encoding_advanced_encoding_not_implemented():
+ def test_get_font_width_from_default():  # L40
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/908/908104.pdf"
+     name = "tika-908104.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -59,6 +64,8 @@ def test_multiline_bfrange():
+     # non regression test for iss_1285
+     url = "https://github.com/alexanderquispe/1REI05/raw/main/reports/report_1/The%20lean%20times%20in%20the%20Peruvian%20economy.pdf"
+     name = "tika-908104.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -74,6 +81,8 @@ def test_bfchar_on_2_chars():
+     # iss #1293
+     url = "https://github.com/xyegithub/myBlog/raw/main/posts/c94b2364/paper_pdfs/ImageClassification/2007%2CASurveyofImageClassificationBasedTechniques.pdf"
+     name = "ASurveyofImageClassificationBasedTechniques.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -84,6 +93,8 @@ def test_ascii_charset():
+     # iss #1312
+     url = "https://github.com/py-pdf/PyPDF2/files/9472500/main.pdf"
+     name = "ascii charset.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert "/a" not in reader.pages[0].extract_text()
+ 
+@@ -92,6 +103,8 @@ def test_ascii_charset():
+ def test_iss1370():
+     url = "https://github.com/py-pdf/PyPDF2/files/9667138/cmap1370.pdf"
+     name = "cmap1370.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     reader.pages[0].extract_text()
+ 
+@@ -100,5 +113,7 @@ def test_iss1370():
+ def test_iss1379():
+     url = "https://github.com/py-pdf/PyPDF2/files/9712729/02voc.pdf"
+     name = "02voc.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     reader.pages[2].extract_text()
+diff --git a/tests/test_filters.py b/tests/test_filters.py
+index cc745c2..228c76d 100644
+--- a/tests/test_filters.py
++++ b/tests/test_filters.py
+@@ -205,6 +205,8 @@ def test_CCITTFaxDecode():
+ def test_decompress_zlib_error(mock_logger_warning):
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/952/952445.pdf"
+     name = "tika-952445.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -217,6 +219,8 @@ def test_decompress_zlib_error(mock_logger_warning):
+ def test_lzw_decode_neg1():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/921/921632.pdf"
+     name = "tika-921632.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     with pytest.raises(PdfReadError) as exc:
+         for page in reader.pages:
+@@ -228,6 +232,8 @@ def test_lzw_decode_neg1():
+ def test_issue_399():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/976/976970.pdf"
+     name = "tika-976970.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     reader.pages[1].extract_text()
+ 
+@@ -238,6 +244,8 @@ def test_image_without_imagemagic():
+         sys.modules["PIL"] = None
+         url = "https://corpora.tika.apache.org/base/docs/govdocs1/914/914102.pdf"
+         name = "tika-914102.pdf"
++
++        return
+         data = BytesIO(get_pdf_from_url(url, name=name))
+         reader = PdfReader(data, strict=True)
+ 
+diff --git a/tests/test_generic.py b/tests/test_generic.py
+index 886e4d3..a862840 100644
+--- a/tests/test_generic.py
++++ b/tests/test_generic.py
+@@ -605,6 +605,7 @@ def test_dict_read_from_stream(caplog):
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/984/984877.pdf"
+     name = "tika-984877.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -619,6 +620,7 @@ def test_parse_content_stream_peek_percentage():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/985/985770.pdf"
+     name = "tika-985770.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -630,6 +632,7 @@ def test_read_inline_image_no_has_q():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/998/998719.pdf"
+     name = "tika-998719.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -640,6 +643,7 @@ def test_read_inline_image_loc_neg_1():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/935/935066.pdf"
+     name = "tika-935066.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -651,6 +655,7 @@ def test_text_string_write_to_stream():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924562.pdf"
+     name = "tika-924562.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.compress_content_streams()
+@@ -661,6 +666,7 @@ def test_name_object_read_from_stream_unicode_error():  # L588
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/974/974966.pdf"
+     name = "tika-974966.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -671,6 +677,7 @@ def test_bool_repr(tmp_path):
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/932/932449.pdf"
+     name = "tika-932449.pdf"
+ 
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     write_path = tmp_path / "tmp-fields-report.txt"
+     with open(write_path, "w") as fp:
+@@ -692,6 +699,7 @@ def test_issue_997(mock_logger_warning):
+     url = "https://github.com/py-pdf/PyPDF2/files/8908874/Exhibit_A-2_930_Enterprise_Zone_Tax_Credits_final.pdf"
+     name = "gh-issue-997.pdf"
+ 
++    return
+     merger = PdfMerger()
+     merged_filename = "tmp-out.pdf"
+     merger.append(BytesIO(get_pdf_from_url(url, name=name)))  # here the error raises
+diff --git a/tests/test_merger.py b/tests/test_merger.py
+index 9cd1fb1..9c96b95 100644
+--- a/tests/test_merger.py
++++ b/tests/test_merger.py
+@@ -225,6 +225,8 @@ def test_merge_write_closed_fh():
+ def test_trim_outline_list():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/995/995175.pdf"
+     name = "tika-995175.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -239,6 +241,8 @@ def test_trim_outline_list():
+ def test_zoom():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/994/994759.pdf"
+     name = "tika-994759.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -253,6 +257,8 @@ def test_zoom():
+ def test_zoom_xyz_no_left():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/933/933322.pdf"
+     name = "tika-933322.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -267,6 +273,8 @@ def test_zoom_xyz_no_left():
+ def test_outline_item():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/997/997511.pdf"
+     name = "tika-997511.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -282,6 +290,8 @@ def test_outline_item():
+ def test_trim_outline():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/982/982336.pdf"
+     name = "tika-982336.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -297,6 +307,8 @@ def test_trim_outline():
+ def test1():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/923/923621.pdf"
+     name = "tika-923621.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -313,6 +325,8 @@ def test_sweep_recursion1():
+     # TODO: This test looks like an infinite loop.
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924546.pdf"
+     name = "tika-924546.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -343,6 +357,7 @@ def test_sweep_recursion1():
+     ],
+ )
+ def test_sweep_recursion2(url, name):
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -360,6 +375,8 @@ def test_sweep_recursion2(url, name):
+ def test_sweep_indirect_list_newobj_is_None(caplog):
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/906/906769.pdf"
+     name = "tika-906769.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -379,6 +396,8 @@ def test_iss1145():
+     # issue with FitH destination with null param
+     url = "https://github.com/py-pdf/PyPDF2/files/9164743/file-0.pdf"
+     name = "iss1145.pdf"
++
++    return
+     merger = PdfMerger()
+     merger.append(PdfReader(BytesIO(get_pdf_from_url(url, name=name))))
+     merger.close()
+@@ -407,6 +426,8 @@ def test_deprecate_bookmark_decorator_output():
+ def test_iss1344(caplog):
+     url = "https://github.com/py-pdf/PyPDF2/files/9549001/input.pdf"
+     name = "iss1344.pdf"
++
++    return
+     m = PdfMerger()
+     m.append(PdfReader(BytesIO(get_pdf_from_url(url, name=name))))
+     b = BytesIO()
+diff --git a/tests/test_page.py b/tests/test_page.py
+index 2c2ea3a..f35051e 100644
+--- a/tests/test_page.py
++++ b/tests/test_page.py
+@@ -83,6 +83,7 @@ def test_page_operations(pdf_path, password):
+     This should be done way more thoroughly: It should be checked if the
+     output is as expected.
+     """
++    return
+     if pdf_path.startswith("http"):
+         pdf_path = BytesIO(get_pdf_from_url(pdf_path, pdf_path.split("/")[-1]))
+     else:
+@@ -286,6 +287,8 @@ def test_multi_language():
+ @pytest.mark.external
+ def test_extract_text_single_quote_op():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/964/964029.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-964029.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -294,6 +297,7 @@ def test_extract_text_single_quote_op():
+ @pytest.mark.external
+ def test_no_ressources_on_text_extract():
+     url = "https://github.com/py-pdf/PyPDF2/files/9428434/TelemetryTX_EM.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-964029.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -304,6 +308,8 @@ def test_iss_1142():
+     # check fix for problem of context save/restore (q/Q)
+     url = "https://github.com/py-pdf/PyPDF2/files/9150656/ST.2019.PDF"
+     name = "st2019.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     txt = reader.pages[3].extract_text()
+     # The following text is contained in two different cells:
+@@ -344,6 +350,7 @@ def test_iss_1142():
+     ],
+ )
+ def test_extract_text_page_pdf(url, name):
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -354,6 +361,8 @@ def test_extract_text_page_pdf(url, name):
+ def test_extract_text_page_pdf_impossible_decode_xform(caplog):
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/972/972962.pdf"
+     name = "tika-972962.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -366,6 +375,8 @@ def test_extract_text_page_pdf_impossible_decode_xform(caplog):
+ def test_extract_text_operator_t_star():  # L1266, L1267
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/967/967943.pdf"
+     name = "tika-967943.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+@@ -820,6 +831,7 @@ def test_text_extraction_issue_1091():
+ def test_empyt_password_1088():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/941/941536.pdf"
+     name = "tika-941536.pdf"
++    return
+     stream = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(stream)
+     len(reader.pages)
+@@ -865,6 +877,7 @@ def test_read_link_annotation():
+ def test_no_resources():
+     url = "https://github.com/py-pdf/PyPDF2/files/9572045/108.pdf"
+     name = "108.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     page_one = reader.pages[0]
+     page_two = reader.pages[0]
+diff --git a/tests/test_reader.py b/tests/test_reader.py
+index 25018ae..7945e32 100644
+--- a/tests/test_reader.py
++++ b/tests/test_reader.py
+@@ -752,6 +752,7 @@ def test_convertToInt_deprecated():
+ @pytest.mark.external
+ def test_iss925():
+     url = "https://github.com/py-pdf/PyPDF2/files/8796328/1.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="iss925.pdf")))
+ 
+     for page_sliced in reader.pages:
+@@ -808,6 +809,7 @@ def test_read_form_416():
+     url = (
+         "https://www.fda.gov/downloads/AboutFDA/ReportsManualsForms/Forms/UCM074728.pdf"
+     )
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="issue_416.pdf")))
+     fields = reader.get_form_text_fields()
+     assert len(fields) > 0
+@@ -818,6 +820,7 @@ def test_extract_text_xref_issue_2(caplog):
+     # pdf/0264cf510015b2a4b395a15cb23c001e.pdf
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/981/981961.pdf"
+     msg = "incorrect startxref pointer(2)"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-981961.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -830,6 +833,7 @@ def test_extract_text_xref_issue_3(caplog):
+     # pdf/0264cf510015b2a4b395a15cb23c001e.pdf
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/977/977774.pdf"
+     msg = "incorrect startxref pointer(3)"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-977774.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -840,6 +844,7 @@ def test_extract_text_xref_issue_3(caplog):
+ def test_extract_text_pdf15():
+     # pdf/0264cf510015b2a4b395a15cb23c001e.pdf
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/976/976030.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-976030.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -849,6 +854,7 @@ def test_extract_text_pdf15():
+ def test_extract_text_xref_table_21_bytes_clrf():
+     # pdf/0264cf510015b2a4b395a15cb23c001e.pdf
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/956/956939.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name="tika-956939.pdf")))
+     for page in reader.pages:
+         page.extract_text()
+@@ -858,6 +864,7 @@ def test_extract_text_xref_table_21_bytes_clrf():
+ def test_get_fields():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/972/972486.pdf"
+     name = "tika-972486.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     fields = reader.get_fields()
+     assert fields is not None
+@@ -871,6 +878,8 @@ def test_get_fields_read_else_block():
+     # covers also issue 1089
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/934/934771.pdf"
+     name = "tika-934771.pdf"
++
++    return
+     PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+ 
+ 
+@@ -878,6 +887,8 @@ def test_get_fields_read_else_block():
+ def test_get_fields_read_else_block2():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/914/914902.pdf"
+     name = "tika-914902.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     fields = reader.get_fields()
+     assert fields is None
+@@ -888,6 +899,8 @@ def test_get_fields_read_else_block2():
+ def test_get_fields_read_else_block3():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/957/957721.pdf"
+     name = "tika-957721.pdf"
++
++    return
+     PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+ 
+ 
+@@ -895,6 +908,8 @@ def test_get_fields_read_else_block3():
+ def test_metadata_is_none():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/963/963692.pdf"
+     name = "tika-963692.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert reader.metadata is None
+ 
+@@ -903,6 +918,7 @@ def test_metadata_is_none():
+ def test_get_fields_read_write_report():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/909/909655.pdf"
+     name = "tika-909655.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     with open("tmp-fields-report.txt", "w") as fp:
+         fields = reader.get_fields(fileobj=fp)
+@@ -928,6 +944,7 @@ def test_xfa(src):
+ def test_xfa_non_empty():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/942/942050.pdf"
+     name = "tika-942050.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert list(reader.xfa.keys()) == [
+         "preamble",
+@@ -956,6 +973,7 @@ def test_header(src, pdf_header):
+ def test_outline_color():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924546.pdf"
+     name = "tika-924546.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert reader.outline[0].color == [0, 0, 1]
+ 
+@@ -964,6 +982,7 @@ def test_outline_color():
+ def test_outline_font_format():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924546.pdf"
+     name = "tika-924546.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert reader.outline[0].font_format == 2
+ 
+@@ -1092,6 +1111,7 @@ def test_named_destination():
+     # 1st case : the named_dest are stored directly as a dictionnary, PDF1.1 style
+     url = "https://github.com/py-pdf/PyPDF2/files/9197028/lorem_ipsum.pdf"
+     name = "lorem_ipsum.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert len(reader.named_destinations) > 0
+     # 2nd case : Dest below names and with Kids...
+@@ -1107,6 +1127,7 @@ def test_named_destination():
+ def test_outline_with_missing_named_destination():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/913/913678.pdf"
+     name = "tika-913678.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     # outline items in document reference a named destination that is not defined
+     assert reader.outline[1][0].title.startswith("Report for 2002AZ3B: Microbial")
+@@ -1116,6 +1137,7 @@ def test_outline_with_missing_named_destination():
+ def test_outline_with_empty_action():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924546.pdf"
+     name = "tika-924546.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     # outline items (entitled Tables and Figures) utilize an empty action (/A)
+     # that has no type or destination
+@@ -1133,6 +1155,7 @@ def test_PdfReaderMultipleDefinitions(caplog):
+     # iss325
+     url = "https://github.com/py-pdf/PyPDF2/files/9176644/multipledefs.pdf"
+     name = "multipledefs.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     reader.pages[0].extract_text()
+     assert normalize_warnings(caplog.text) == [
+@@ -1159,6 +1182,7 @@ def test_corrupted_xref_table():
+     # issue #1292
+     url = "https://github.com/py-pdf/PyPDF2/files/9444747/BreezeManual.orig.pdf"
+     name = "BreezeMan1.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     reader.pages[0].extract_text()
+     url = "https://github.com/py-pdf/PyPDF2/files/9444748/BreezeManual.failed.pdf"
+@@ -1172,6 +1196,7 @@ def test_reader(caplog):
+     # iss #1273
+     url = "https://github.com/py-pdf/PyPDF2/files/9464742/shiv_resume.pdf"
+     name = "shiv_resume.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert "Previous trailer can not be read" in caplog.text
+     caplog.clear()
+@@ -1190,6 +1215,7 @@ def test_zeroing_xref():
+     # iss #328
+     url = "https://github.com/py-pdf/PyPDF2/files/9066120/UTA_OSHA_3115_Fall_Protection_Training_09162021_.pdf"
+     name = "UTA_OSHA.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     len(reader.pages)
+ 
+@@ -1197,6 +1223,7 @@ def test_zeroing_xref():
+ def test_thread():
+     url = "https://github.com/py-pdf/PyPDF2/files/9066120/UTA_OSHA_3115_Fall_Protection_Training_09162021_.pdf"
+     name = "UTA_OSHA.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     assert reader.threads is None
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924666.pdf"
+@@ -1209,6 +1236,7 @@ def test_thread():
+ def test_build_outline_item(caplog):
+     url = "https://github.com/py-pdf/PyPDF2/files/9464742/shiv_resume.pdf"
+     name = "shiv_resume.pdf"
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     outline = reader._build_outline_item(
+         DictionaryObject(
+diff --git a/tests/test_utils.py b/tests/test_utils.py
+index a5f5fa1..dcccd87 100644
+--- a/tests/test_utils.py
++++ b/tests/test_utils.py
+@@ -256,6 +256,7 @@ def test_escapedcode_followed_by_int():
+     url = "https://github.com/timedegree/playground_files/raw/main/%E8%AE%BA%E6%96%87/AN%20EXACT%20ANALYTICAL%20SOLUTION%20OF%20KEPLER'S%20EQUATION.pdf"
+     name = "keppler.pdf"
+ 
++    return
+     reader = PdfReader(io.BytesIO(get_pdf_from_url(url, name=name)))
+     for page in reader.pages:
+         page.extract_text()
+diff --git a/tests/test_workflows.py b/tests/test_workflows.py
+index 7720a66..36098a9 100644
+--- a/tests/test_workflows.py
++++ b/tests/test_workflows.py
+@@ -243,6 +243,7 @@ def test_rotate_45():
+     ],
+ )
+ def test_extract_textbench(enable, url, pages, print_result=False):
++    return
+     if not enable:
+         return
+     try:
+@@ -314,6 +315,7 @@ def test_orientations():
+     ],
+ )
+ def test_overlay(base_path, overlay_path):
++    return
+     if base_path.startswith("http"):
+         base_path = BytesIO(get_pdf_from_url(base_path, name="tika-935981.pdf"))
+     else:
+@@ -346,6 +348,7 @@ def test_overlay(base_path, overlay_path):
+     ],
+ )
+ def test_merge_with_warning(tmp_path, url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     merger = PdfMerger()
+@@ -365,6 +368,7 @@ def test_merge_with_warning(tmp_path, url, name):
+     ],
+ )
+ def test_merge(tmp_path, url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     merger = PdfMerger()
+@@ -383,6 +387,7 @@ def test_merge(tmp_path, url, name):
+     ],
+ )
+ def test_get_metadata(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     reader.metadata
+@@ -461,6 +466,7 @@ def test_get_metadata(url, name):
+     ],
+ )
+ def test_extract_text(url, name, strict, exception):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=strict)
+     if not exception:
+@@ -489,6 +495,7 @@ def test_extract_text(url, name, strict, exception):
+     ],
+ )
+ def test_compress_raised(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     # no more error since iss #1090 fix
+@@ -519,6 +526,7 @@ def test_compress_raised(url, name):
+     ],
+ )
+ def test_compress(url, name, strict):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=strict)
+     # TODO: which page exactly?
+@@ -538,6 +546,7 @@ def test_compress(url, name, strict):
+     ],
+ )
+ def test_get_fields_warns(tmp_path, caplog, url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     write_path = tmp_path / "tmp.txt"
+@@ -559,6 +568,7 @@ def test_get_fields_warns(tmp_path, caplog, url, name):
+     ],
+ )
+ def test_get_fields_no_warning(tmp_path, url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     write_path = tmp_path / "tmp.txt"
+@@ -572,6 +582,8 @@ def test_get_fields_no_warning(tmp_path, url, name):
+ def test_scale_rectangle_indirect_object():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/999/999944.pdf"
+     name = "tika-999944.pdf"
++
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+ 
+@@ -657,6 +669,7 @@ def test_merge_output(caplog):
+     ],
+ )
+ def test_image_extraction(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+ 
+@@ -685,6 +698,7 @@ def test_image_extraction_strict():
+     # Emits log messages
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/914/914102.pdf"
+     name = "tika-914102.pdf"
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=True)
+ 
+@@ -719,6 +733,7 @@ def test_image_extraction_strict():
+     ],
+ )
+ def test_image_extraction2(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+ 
+@@ -757,6 +772,7 @@ def test_image_extraction2(url, name):
+     ],
+ )
+ def test_get_outline(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     reader.outline
+@@ -777,6 +793,7 @@ def test_get_outline(url, name):
+     ],
+ )
+ def test_get_xfa(url, name):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data)
+     reader.xfa
+@@ -809,6 +826,7 @@ def test_get_xfa(url, name):
+     ],
+ )
+ def test_get_fonts(url, name, strict):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=strict)
+     for page in reader.pages:
+@@ -842,6 +860,7 @@ def test_get_fonts(url, name, strict):
+     ],
+ )
+ def test_get_xmp(url, name, strict):
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=strict)
+     xmp_info = reader.xmp_metadata
+@@ -877,6 +896,8 @@ def test_get_xmp(url, name, strict):
+ def test_tounicode_is_identity():
+     url = "https://github.com/py-pdf/PyPDF2/files/9998335/FP_Thesis.pdf"
+     name = "FP_Thesis.pdf"
++
++    return
+     data = BytesIO(get_pdf_from_url(url, name=name))
+     reader = PdfReader(data, strict=False)
+     reader.pages[0].extract_text()
+diff --git a/tests/test_writer.py b/tests/test_writer.py
+index 0e63b0a..b9df105 100644
+--- a/tests/test_writer.py
++++ b/tests/test_writer.py
+@@ -655,6 +655,8 @@ def test_sweep_indirect_references_nullobject_exception():
+     # TODO: Check this more closely... this looks weird
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/924/924666.pdf"
+     name = "tika-924666.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+@@ -669,6 +671,8 @@ def test_sweep_indirect_references_nullobject_exception():
+ def test_write_outline_item_on_page_fitv():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/922/922840.pdf"
+     name = "tika-922840.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     merger = PdfMerger()
+     merger.append(reader)
+diff --git a/tests/test_xmp.py b/tests/test_xmp.py
+index 5b8202c..1a46fed 100644
+--- a/tests/test_xmp.py
++++ b/tests/test_xmp.py
+@@ -99,6 +99,7 @@ def test_identity(x):
+     ],
+ )
+ def test_xmpmm(url, name, xmpmm_instance_id):
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     xmp_metadata = reader.xmp_metadata
+     assert xmp_metadata.xmpmm_instance_id == xmpmm_instance_id
+@@ -110,6 +111,8 @@ def test_xmpmm(url, name, xmpmm_instance_id):
+ def test_dc_description():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/953/953770.pdf"
+     name = "tika-953770.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     xmp_metadata = reader.xmp_metadata
+     assert xmp_metadata.dc_description == {
+@@ -125,6 +128,8 @@ def test_dc_description():
+ def test_dc_creator():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/953/953770.pdf"
+     name = "tika-953770.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     xmp_metadata = reader.xmp_metadata
+     assert xmp_metadata.dc_creator == ["U.S. Fish and Wildlife Service"]
+@@ -136,6 +141,8 @@ def test_dc_creator():
+ def test_custom_properties():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/986/986065.pdf"
+     name = "tika-986065.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     xmp_metadata = reader.xmp_metadata
+     assert xmp_metadata.custom_properties == {"Style": "Searchable Image (Exact)"}
+@@ -147,6 +154,8 @@ def test_custom_properties():
+ def test_dc_subject():
+     url = "https://corpora.tika.apache.org/base/docs/govdocs1/959/959519.pdf"
+     name = "tika-959519.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     xmp_metadata = reader.xmp_metadata
+     assert xmp_metadata.dc_subject == [
+@@ -178,6 +187,8 @@ def test_dc_subject():
+ def test_issue585():
+     url = "https://github.com/mstamy2/PyPDF2/files/5536984/test.pdf"
+     name = "mstamy2-5536984.pdf"
++
++    return
+     reader = PdfReader(BytesIO(get_pdf_from_url(url, name=name)))
+     with pytest.raises(PdfReadError) as exc:
+         reader.xmp_metadata
